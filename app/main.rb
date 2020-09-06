@@ -2,7 +2,16 @@
 
 def tick args
   size = 64
-  #Draw a checkerboard as a placeholder game board
+
+  # * FIXME - ~Numeric#times~ over ~while~ loops.
+  # Don't use ~while~ loops in Ruby. Use ~Numeric#times~
+  # #+begin_src ruby
+  #   12.times do |i|
+  #     21.times do |j|
+  #     end
+  #   end
+  # #+end_src
+  # Draw a checkerboard as a placeholder game board
   i = 0
   j = 0
   while i < 12 do
@@ -21,6 +30,10 @@ def tick args
   args.state.player.direction ||= 1
 
   #Get the keyboard input and set player properties
+
+  # * FIXME: ~Keyboard#right_left~
+  # There is ~args.inputs.keyboard.right_left~ that returns -1, 0, 1.
+  # Take a look at the dueling starships sample app.
   if args.inputs.keyboard.right
     args.state.player.direction = 1
     if ((args.state.tick_count - args.state.player.started_running_at) % 30) == 0
@@ -43,6 +56,9 @@ def tick args
     args.state.player.x -= size
   end
 
+  # * FIXME: ~Keyboard#up_down~
+  # There is ~args.inputs.keyboard.up_down~ that returns -1, 0, 1. Take a look at the
+  # dueling starships sample app.
   if args.inputs.keyboard.up
     args.state.player.direction = 1
     if ((args.state.tick_count - args.state.player.started_running_at) % 30) == 0
