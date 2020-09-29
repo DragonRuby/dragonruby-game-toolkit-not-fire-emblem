@@ -34,6 +34,18 @@ def tick args
   # * FIXME: ~Keyboard#right_left~
   # There is ~args.inputs.keyboard.right_left~ that returns -1, 0, 1.
   # Take a look at the dueling starships sample app.
+  
+  
+  # place menu overlay
+  if args.inputs.keyboard.key_down.enter
+    args.state.menu = [980, 0, 300, 720, 0, 0,   180, 170]
+  end
+  # save menu overlay in state
+  if args.state.menu
+    args.outputs.solids << args.state.menu
+  end
+  
+  
   if args.inputs.keyboard.right
     args.state.player.direction = 1
     if ((args.state.tick_count - args.state.player.started_running_at) % 30) == 0
