@@ -40,9 +40,42 @@ def tick args
   if args.inputs.keyboard.key_down.enter
     args.state.menu = [980, 0, 300, 720, 0, 0,   180, 170]
   end
-  # save menu overlay in state
+  # save menu overlay in state and display along with list of attributes
   if args.state.menu
     args.outputs.solids << args.state.menu
+    args.outputs.labels << {
+                                x:              1120,
+                                y:              650,
+                                text:           "Move",
+                                r:              155,
+                                g:              0,
+                                b:              0
+                          }
+    args.outputs.labels << {
+                                x:              1120,
+                                y:              600,
+                                text:           "Attack",
+                                r:              155,
+                                g:              0,
+                                b:              0                          
+                          }
+
+    args.outputs.labels << {
+                                x:              1120,
+                                y:              550,
+                                text:           "Items",
+                                r:              155,
+                                g:              0,
+                                b:              0                          
+                          }
+    args.outputs.labels << {
+                                x:              1120,
+                                y:              500,
+                                text:           "Wait",
+                                r:              155,
+                                g:              0,
+                                b:              0                          
+                          }
   end
   
   
