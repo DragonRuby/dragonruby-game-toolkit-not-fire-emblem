@@ -8,7 +8,7 @@ def tick args
   j = 0
   while i < 12 do
     while j < 21 do
-      args.outputs.solids << [(j*size), (i*size), size, size, 0, 0, ((i+j) % 2 == 0) ? 255 : 0]
+      args.outputs.solids << [(j*size), (i*size), size, size, 255, 255, 0, ((i+j) % 2 == 0) ? 255 : 0]
       j += 1
     end
     j = 0
@@ -35,7 +35,7 @@ def tick args
   args.state.bot1.strength ||= 5
 
   # bot2 attributes
-  args.state.bot2.x ||= 704
+  args.state.bot2.x ||= 960
   args.state.bot2.y ||= 640
   args.state.bot2.w ||= 64
   args.state.bot2.h ||= 64
@@ -202,6 +202,14 @@ def tick args
     args.state.player.started_running_at ||= args.state.tick_count
   end
 
+  #Display obstacles
+  args.outputs.solids << [0, 64, 256, 384, 0, 0, 150]
+  args.outputs.solids << [256, 128, 256, 128, 0, 0, 150]
+  args.outputs.solids << [640, 192, 256, 384, 0, 0, 150]
+  args.outputs.solids << [640, 0, 256, 128, 0, 0, 150]
+  args.outputs.solids << [704, 576, 256, 128, 0, 0, 150]
+
+
   #Display the flying dragon and bots
   args.outputs.sprites << display_dragon(args)
   args.outputs.sprites << display_bot1(args)
@@ -308,3 +316,6 @@ def display_bot3 args
     flip_horizontally: args.state.bot3.direction < 0
   }
 end
+
+
+
