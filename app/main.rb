@@ -14,7 +14,33 @@ def tick args
     j = 0
     i += 1
   end
-
+  k = 0
+  ary = Array.new(220)
+  while k < 220
+      ary[k] = 1
+      if k > 20 and k < 36
+        ary[k] = 0
+      end
+      if k > 40 and k < 56
+        ary[k] = 0
+      end
+      if k > 60 and k < 76
+        ary[k] = 0
+      end
+      if k > 80 and k < 96
+        ary[k] = 0
+      end
+      if k > 100 and k < 116
+        ary[k] = 0
+      end
+      if k > 120 and k < 136
+        ary[k] = 0
+      end
+      k += 1
+  end
+  target = 160
+  target2 = 146
+  target3 = 214
   # player attributes
   args.state.player.x ||= 0
   args.state.player.y ||= 0
@@ -23,7 +49,7 @@ def tick args
   args.state.player.direction ||= 1
   args.state.player.hp ||= 100
   args.state.player.strength ||= 100
-
+  args.state.player.pos ||= 0
 
   # bot1 attributes
   args.state.bot1.x ||= 448
@@ -150,10 +176,12 @@ def tick args
     args.state.player.direction = 1
     args.state.player.started_running_at = args.state.tick_count
     args.state.player.x += size
+    args.state.player.pos += 1
   elsif args.inputs.keyboard.key_down.left
     args.state.player.direction = -1
     args.state.player.started_running_at = args.state.tick_count
     args.state.player.x -= size
+    args.state.player.pos -= 1
   end
 
   
@@ -164,10 +192,12 @@ def tick args
     args.state.player.direction = 1
     args.state.player.started_running_at = args.state.tick_count
     args.state.player.y += size
+    args.state.player.pos += 20
   elsif args.inputs.keyboard.key_down.down
     args.state.player.direction = -1
     args.state.player.started_running_at = args.state.tick_count
     args.state.player.y -= size
+    args.state.player.pos -= 20
   end
 
   pigga = args.state.player.intersect_rect? args.state.obs1
@@ -175,9 +205,165 @@ def tick args
     args.gtk.notify! "sprites collide!"
     args.state.player.y -= size
   end
-
-
-
+  cangoup = false
+  cangoright = false
+  cangodown = false
+  cangoleft = false
+  testtarget = args.state.player.pos
+  if args.inputs.keyboard.key_down.f
+    while target != testtarget
+      cangoup = false
+     cangoright = false
+    cangodown = false
+   cangoleft = false
+   if target-testtarget >= 20 and ary[args.state.player.pos+20] == 1
+        cangoup = true
+    elsif testtarget-target >= 20 and ary[args.state.player.pos-20] == 1
+        cangodown = true
+        cangoup = false
+    elsif target%20-testtarget%20 > 0 and ary[args.state.player.pos+1] == 1
+        cangodown = false
+        cangoup = false
+        cangoright = true
+    elsif testtarget%20-target%20 > 0 and ary[args.state.player.pos-1] == 1
+        cangodown = false
+        cangoup = false
+        cangoright = false
+        cangoleft = true
+    end
+    if cangodown == true
+    args.state.player.direction = -1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.y -= size
+    args.state.player.pos -= 20
+    testtarget -= 20
+    elsif cangoup == true
+    args.state.player.direction = 1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.y += size
+    args.state.player.pos += 20
+    testtarget+=20
+    
+    elsif cangoright == true
+     args.state.player.direction = 1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.x += size
+    args.state.player.pos += 1
+    testtarget += 1
+    
+    elsif cangoleft == true
+    args.state.player.direction = -1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.x -= size
+    args.state.player.pos -= 1     
+    testtarget -= 1    
+    end
+    
+  end
+  end
+  if args.inputs.keyboard.key_down.g
+    while target2 != testtarget
+      cangoup = false
+     cangoright = false
+    cangodown = false
+   cangoleft = false
+   if target2-testtarget >= 20 and ary[args.state.player.pos+20] == 1
+        cangoup = true
+    elsif testtarget-target2 >= 20 and ary[args.state.player.pos-20] == 1
+        cangodown = true
+        cangoup = false
+    elsif target2%20-testtarget%20 > 0 and ary[args.state.player.pos+1] == 1
+        cangodown = false
+        cangoup = false
+        cangoright = true
+    elsif testtarget%20-target2%20 > 0 and ary[args.state.player.pos-1] == 1
+        cangodown = false
+        cangoup = false
+        cangoright = false
+        cangoleft = true
+    end
+    if cangodown == true
+    args.state.player.direction = -1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.y -= size
+    args.state.player.pos -= 20
+    testtarget -= 20
+    elsif cangoup == true
+    args.state.player.direction = 1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.y += size
+    args.state.player.pos += 20
+    testtarget+=20
+    
+    elsif cangoright == true
+     args.state.player.direction = 1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.x += size
+    args.state.player.pos += 1
+    testtarget += 1
+    
+    elsif cangoleft == true
+    args.state.player.direction = -1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.x -= size
+    args.state.player.pos -= 1     
+    testtarget -= 1    
+    end
+    
+  end
+  end
+ if args.inputs.keyboard.key_down.h
+    while target3 != testtarget
+      cangoup = false
+     cangoright = false
+    cangodown = false
+   cangoleft = false
+   if target3-testtarget >= 20 and ary[args.state.player.pos+20] == 1
+        cangoup = true
+    elsif testtarget-target3 >= 20 and ary[args.state.player.pos-20] == 1
+        cangodown = true
+        cangoup = false
+    elsif target3%20-testtarget%20 > 0 and ary[args.state.player.pos+1] == 1
+        cangodown = false
+        cangoup = false
+        cangoright = true
+    elsif testtarget%20-target3%20 > 0 and ary[args.state.player.pos-1] == 1
+        cangodown = false
+        cangoup = false
+        cangoright = false
+        cangoleft = true
+    end
+    if cangodown == true
+    args.state.player.direction = -1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.y -= size
+    args.state.player.pos -= 20
+    testtarget -= 20
+    elsif cangoup == true
+    args.state.player.direction = 1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.y += size
+    args.state.player.pos += 20
+    testtarget+=20
+    
+    elsif cangoright == true
+     args.state.player.direction = 1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.x += size
+    args.state.player.pos += 1
+    testtarget += 1
+    
+    elsif cangoleft == true
+    args.state.player.direction = -1
+    args.state.player.started_running_at = args.state.tick_count
+    args.state.player.x -= size
+    args.state.player.pos -= 1     
+    testtarget -= 1    
+    end
+    
+  end
+  end
+ 
   #Wrap player around the stage
   if args.state.player.x > 1280
     args.state.player.x = -64
@@ -241,6 +427,7 @@ def display_dragon args
                                               number_of_frames_to_show_each_sprite,
                                               does_sprite_loop
   {
+    pos: args.state.player.pos,
     x: args.state.player.x,
     y: args.state.player.y,
     w: args.state.player.w,
