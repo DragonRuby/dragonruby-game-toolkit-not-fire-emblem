@@ -8,7 +8,7 @@ def tick args
   j = 0
   while i < 12 do
     while j < 21 do
-      args.outputs.solids << [(j*size), (i*size), size, size, 255, 255, 0, ((i+j) % 2 == 0) ? 255 : 0]
+      args.outputs.solids << [(j*size), (i*size), size, size, 255, 100, 0, ((i+j) % 2 == 0) ? 255 : 0]
       j += 1
     end
     j = 0
@@ -51,6 +51,13 @@ def tick args
   args.state.bot3.direction ||= 1
   args.state.bot3.hp ||= 100
   args.state.bot3.strength ||= 8
+
+  # obstacle attributes
+  args.state.obs1.x ||= 64
+  args.state.obs1.y ||= 64
+  args.state.obs1.w ||= 960
+  args.state.obs1.h ||= 384
+  args.state.obs1.direction ||= 1
 
 
   @menu_shown ||= :hidden
@@ -138,18 +145,7 @@ def tick args
     end
   end
   
-  if args.inputs.keyboard.right
-    args.state.player.direction = 1
-    if ((args.state.tick_count - args.state.player.started_running_at) % 30) == 0
-      args.state.player.x += size
-    end
-  elsif args.inputs.keyboard.left
-    args.state.player.direction = -1
-    if ((args.state.tick_count - args.state.player.started_running_at) % 30) == 0
-      args.state.player.x -= size
-    end
-  end
-
+  # left and right movement
   if args.inputs.keyboard.key_down.right
     args.state.player.direction = 1
     args.state.player.started_running_at = args.state.tick_count
@@ -160,21 +156,10 @@ def tick args
     args.state.player.x -= size
   end
 
-  # * FIXME: ~Keyboard#up_down~
-  # There is ~args.inputs.keyboard.up_down~ that returns -1, 0, 1. Take a look at the
-  # dueling starships sample app.
-  if args.inputs.keyboard.up
-    args.state.player.direction = 1
-    if ((args.state.tick_count - args.state.player.started_running_at) % 30) == 0
-      args.state.player.y += size
-    end
-  elsif args.inputs.keyboard.down
-    args.state.player.direction = -1
-    if ((args.state.tick_count - args.state.player.started_running_at) % 30) == 0
-      args.state.player.y -= size
-    end
-  end
+  
 
+
+  # up and down movement
   if args.inputs.keyboard.key_down.up
     args.state.player.direction = 1
     args.state.player.started_running_at = args.state.tick_count
@@ -184,6 +169,14 @@ def tick args
     args.state.player.started_running_at = args.state.tick_count
     args.state.player.y -= size
   end
+
+  pigga = args.state.player.intersect_rect? args.state.obs1
+  if pigga
+    args.gtk.notify! "sprites collide!"
+    args.state.player.y -= size
+  end
+
+
 
   #Wrap player around the stage
   if args.state.player.x > 1280
@@ -202,20 +195,14 @@ def tick args
     args.state.player.started_running_at ||= args.state.tick_count
   end
 
-  #Display obstacles
-  args.outputs.solids << [0, 64, 256, 384, 0, 0, 150]
-  args.outputs.solids << [256, 128, 256, 128, 0, 0, 150]
-  args.outputs.solids << [640, 192, 256, 384, 0, 0, 150]
-  args.outputs.solids << [640, 0, 256, 128, 0, 0, 150]
-  args.outputs.solids << [704, 576, 256, 128, 0, 0, 150]
-
+  # Display obstacles
+  args.outputs.sprites << display_obs1(args)
 
   #Display the flying dragon and bots
   args.outputs.sprites << display_dragon(args)
   args.outputs.sprites << display_bot1(args)
   args.outputs.sprites << display_bot2(args)
   args.outputs.sprites << display_bot3(args)
-  args.outputs.labels << [30, 700, "Use arrow keys to move around.", 255, 255, 255]
 end
 
 # helper method to create a button
@@ -247,8 +234,8 @@ end
 
 def display_dragon args
   start_looping_at = 0
-  number_of_sprites = 6
-  number_of_frames_to_show_each_sprite = 4
+  number_of_sprites = 2
+  number_of_frames_to_show_each_sprite = 8
   does_sprite_loop = true
   sprite_index = start_looping_at.frame_index number_of_sprites,
                                               number_of_frames_to_show_each_sprite,
@@ -258,15 +245,15 @@ def display_dragon args
     y: args.state.player.y,
     w: args.state.player.w,
     h: args.state.player.h,
-    path: "sprites/dragon-#{sprite_index}.png",
+    path: "sprites/roy-#{sprite_index}.png",
     flip_horizontally: args.state.player.direction < 0
   }
 end
 
 def display_bot1 args
   start_looping_at = 0
-  number_of_sprites = 2
-  number_of_frames_to_show_each_sprite = 8
+  number_of_sprites = 6
+  number_of_frames_to_show_each_sprite = 4
   does_sprite_loop = true
   sprite_index = start_looping_at.frame_index number_of_sprites,
                                               number_of_frames_to_show_each_sprite,
@@ -276,15 +263,15 @@ def display_bot1 args
     y: args.state.bot1.y,
     w: args.state.bot1.w,
     h: args.state.bot1.h,
-    path: "sprites/roy-#{sprite_index}.png",
+    path: "sprites/dragon-#{sprite_index}.png",
     flip_horizontally: args.state.bot1.direction < 0
   }
 end
 
 def display_bot2 args
   start_looping_at = 0
-  number_of_sprites = 2
-  number_of_frames_to_show_each_sprite = 8
+  number_of_sprites = 6
+  number_of_frames_to_show_each_sprite = 4
   does_sprite_loop = true
   sprite_index = start_looping_at.frame_index number_of_sprites,
                                               number_of_frames_to_show_each_sprite,
@@ -294,15 +281,15 @@ def display_bot2 args
     y: args.state.bot2.y,
     w: args.state.bot2.w,
     h: args.state.bot2.h,
-    path: "sprites/roy-#{sprite_index}.png",
+    path: "sprites/dragon-#{sprite_index}.png",
     flip_horizontally: args.state.bot2.direction < 0
   }
 end
 
 def display_bot3 args
   start_looping_at = 0
-  number_of_sprites = 2
-  number_of_frames_to_show_each_sprite = 8
+  number_of_sprites = 6
+  number_of_frames_to_show_each_sprite = 4
   does_sprite_loop = true
   sprite_index = start_looping_at.frame_index number_of_sprites,
                                               number_of_frames_to_show_each_sprite,
@@ -312,10 +299,25 @@ def display_bot3 args
     y: args.state.bot3.y,
     w: args.state.bot3.w,
     h: args.state.bot3.h,
-    path: "sprites/roy-#{sprite_index}.png",
+    path: "sprites/dragon-#{sprite_index}.png",
     flip_horizontally: args.state.bot3.direction < 0
   }
 end
 
-
-
+  def display_obs1 args
+    start_looping_at = 0
+    number_of_sprites = 1
+    number_of_frames_to_show_each_sprite = 8
+    does_sprite_loop = true
+    sprite_index = start_looping_at.frame_index number_of_sprites,
+                                                number_of_frames_to_show_each_sprite,
+                                                does_sprite_loop
+    {
+      x: args.state.obs1.x,
+      y: args.state.obs1.y,
+      w: args.state.obs1.w,
+      h: args.state.obs1.h,
+      path: "sprites/water-1.png",
+      flip_horizontally: args.state.obs1.direction < 0
+    }
+  end
